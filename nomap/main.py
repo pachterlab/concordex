@@ -1,6 +1,10 @@
 from . import __version__
 import argparse
 import sys
+from scipy.io import mmread
+from sklearn.neighbors import kneighbors_graph
+import random
+
 from .nomap_map import setup_map_args, validate_map_args
 
 # Steps to add new subcommands
