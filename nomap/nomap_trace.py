@@ -35,7 +35,7 @@ def validate_trace_args(parser, args):
 
 
 def run_trace(mtx_fname, assignments_fname, output):
-    mtx = scipy.io.mmread(mtx_fname)
+    mtx = mmread(mtx_fname)
     assignments = pd.read_csv(assignments_fname, header = None)
     trace, random_trace, corrected_trace = nomap_trace(mtx, assignments)
     # Missing format for output file containing trace values
