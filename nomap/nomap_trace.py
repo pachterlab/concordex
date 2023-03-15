@@ -27,20 +27,34 @@ def setup_trace_args(parser):
 
 
 def validate_trace_args(parser, args):
-    run_trace()
+    mtx_fname = args.mtx_file
+    assignments_fname = args.a
+    output = args.o
+    run_trace(mtx_fname, assignments_fname, output)
     return
 
 
-def run_trace():
-    nomap_trace()
+def run_trace(mtx_fname, assignments_fname, output):
+    mtx = scipy.io.mmread(mtx_fname)
+    assignments = pd.read_csv(assignments_fname, header = None)
+    trace, random_trace, corrected_trace = nomap_trace(mtx, assignments)
+    # Missing format for output file containing trace values
     return
 
 
-def nomap_trace():
+def nomap_trace(mtx, assignments):
     # mapped matrix with normal assignments
-    map_mtx = nomap_map()
+    map_mtx = nomap_map(mtx, assignments)
 
     # mapped matrix with permuted assignments
+    n_iters = 50
+    random_map_matrices = []
+    for i in n_iters:
+      random_map_matrices.append(nomap_map(mtx, random.suffle(assignments)))
 
     # compute trace and random
-    return
+    trace = np.trace(map_mtx)/map_mtx.shape[0]
+    random_trace = [np.trace(random_map_mtx)/random_map_mtx.shape[0] for random_map_mtx in random_map_matrices]
+    corrected_trace = trace / random_trace
+
+    return trace, random_trace, corrected_trace
