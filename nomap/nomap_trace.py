@@ -1,3 +1,6 @@
+import pandas as pd
+import numpy as np
+
 from .nomap_map import nomap_map
 
 
@@ -49,8 +52,8 @@ def nomap_trace(mtx, assignments):
     # mapped matrix with permuted assignments
     n_iters = 50
     random_map_matrices = []
-    for i in n_iters:
-      random_map_matrices.append(nomap_map(mtx, random.suffle(assignments)))
+    for i in range(n_iters):
+      random_map_matrices.append(nomap_map(mtx, random.shuffle(assignments)))
 
     # compute trace and random
     trace = np.trace(map_mtx)/map_mtx.shape[0]
