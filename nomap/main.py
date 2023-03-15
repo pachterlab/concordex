@@ -6,6 +6,7 @@ from sklearn.neighbors import kneighbors_graph
 import random
 
 from .nomap_map import setup_map_args, validate_map_args
+from .nomap_trace import setup_trace_args, validate_trace_args
 
 # Steps to add new subcommands
 # Create nomap_subcommand.py (create setup_subcmd_args, validate_subcmd_args, run_subcmd in that file)
@@ -28,6 +29,7 @@ def main():
     # Setup the arguments for all subcommands
     command_to_parser = {
         "map": setup_map_args(subparsers),
+        "trace": setup_trace_args(subparsers),
     }
 
     # Show help when no arguments are given
@@ -46,6 +48,7 @@ def main():
     # Setup validator and runner for all subcommands (validate and run if valid)
     COMMAND_TO_FUNCTION = {
         "map": validate_map_args,
+        "trace": validate_trace_args,
     }
     COMMAND_TO_FUNCTION[sys.argv[1]](parser, args)
 
