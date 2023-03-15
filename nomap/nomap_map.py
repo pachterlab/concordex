@@ -24,14 +24,26 @@ def setup_map_args(parser):
 
 
 def validate_map_args(parser, args):
-    run_map()
+    mtx_fname = args.mtx_file
+    assignments_fname = args.a
+    output = args.o
+    run_map(mtx_fname, assignments_fname, output)
     return
 
 
-def run_map():
-    nomap_map()
+
+def run_map(mtx_fname, assignments_fname, output):
+    mtx = scipy.io.mmread(mtx_fname)
+    assignments = pd.read_csv(assignments_fname, header = None)
+    map_mtx = nomap_map(mtx, assignments)
+    map_mtx.to_csv(output)
     return
 
 
-def nomap_map():
-    return
+def nomap_map(mtx, assignments):
+    n_neighbors = 20
+    conn = k.neighbors_graph(mtx, n_neighbors, mode='connectivity', include_self=False)
+    df = pd.DataFrame(conn.A, index=assignments, columns=assignments)
+    t = df.T.groupby(df.columns).sum().T.groupby(df.columns).sum()
+    map_mtx = t.div(t.sum(1), axis=0)
+    return map_mtx
