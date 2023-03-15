@@ -33,7 +33,7 @@ def validate_map_args(parser, args):
 
 
 def run_map(mtx_fname, assignments_fname, output):
-    mtx = scipy.io.mmread(mtx_fname)
+    mtx = mmread(mtx_fname)
     assignments = pd.read_csv(assignments_fname, header = None)
     map_mtx = nomap_map(mtx, assignments)
     map_mtx.to_csv(output)
@@ -42,7 +42,7 @@ def run_map(mtx_fname, assignments_fname, output):
 
 def nomap_map(mtx, assignments):
     n_neighbors = 20
-    conn = k.neighbors_graph(mtx, n_neighbors, mode='connectivity', include_self=False)
+    conn = kneighbors_graph(mtx, n_neighbors, mode='connectivity', include_self=False)
     df = pd.DataFrame(conn.A, index=assignments, columns=assignments)
     t = df.T.groupby(df.columns).sum().T.groupby(df.columns).sum()
     map_mtx = t.div(t.sum(1), axis=0)
