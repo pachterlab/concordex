@@ -3,7 +3,7 @@
 clean:
 	rm -rf build
 	rm -rf dist
-	rm -rf nomap.egg-info
+	rm -rf concordex.egg-info
 	rm -rf docs/_build
 	rm -rf docs/api
 	rm -rf .coverage

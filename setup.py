@@ -9,9 +9,9 @@ def read(path):
 long_description = read("README.md")
 
 setup(
-    name="nomap",
+    name="concordex",
     version="0.0.0",
-    url="https://github.com/pachterlab/nomap",
+    url="https://github.com/pachterlab/concordex",
     author="Sina Booeshaghi",
     author_email="abooesha@caltech.edu",
     maintainer="Sina Booeshaghi",
@@ -27,7 +27,7 @@ setup(
     include_package_data=True,
     install_requires=read("requirements.txt").strip().split("\n"),
     entry_points={
-        "console_scripts": ["nomap=nomap.main:main"],
+        "console_scripts": ["concordex=concordex.main:main"],
     },
     classifiers=[
         "Environment :: Console",
