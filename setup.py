@@ -10,7 +10,7 @@ long_description = read("README.md")
 
 setup(
     name="concordex",
-    version="0.0.0",
+    version="0.0.1",
     url="https://github.com/pachterlab/concordex",
     author="Sina Booeshaghi",
     author_email="abooesha@caltech.edu",
