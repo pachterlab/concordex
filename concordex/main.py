@@ -14,7 +14,7 @@ from .concordex_stat import setup_stat_args, validate_stat_args
 def main():
     # setup parsers
     parser = argparse.ArgumentParser(
-        description=f"concordex {__version__}: Format sequence specification files"
+        description=f"concordex {__version__}: Assess clustering"
     )
     subparsers = parser.add_subparsers(
         dest="command",
