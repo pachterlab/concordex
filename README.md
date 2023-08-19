@@ -38,3 +38,17 @@ The `concordex stat` command generates the `concordex` statistic as described in
 ```bash
 concordex stat -a assignments.txt -o map.csv mtx_file
 ```
+
+and with python (in a jupyter notebook)
+
+```python
+from concordex.concordex_stat import concordex_stat
+import anndata
+
+adata = anndata.read_h5ad("adata.h5ad")
+
+mtx = adata.X # or adata.layers["my matrix"], should be scipy sparse matrix
+assignments = adata.obs["assignments"].values
+
+trace, random_trace, corrected_trace = concordex_stat(mtx, assignments)
+```
