@@ -9,7 +9,7 @@ def setup_map_args(parser):
         description="",
         help="",
     )
-    parser_map.add_argument("mtx_file", help="Matrix file")
+    parser_map.add_argument("mtx_file", help="KNN matrix")
     parser_map.add_argument(
         "-a",
         metavar="Labels",
@@ -24,6 +24,13 @@ def setup_map_args(parser):
         type=str,
         default=None,
     )
+    parser_map.add_argument(
+        "-n",
+        metavar="Neighbors",
+        help=("Number of neighbors to expect for each observation; defaults to 20"),
+        type=int,
+        default=20,
+    )
     # default value is false
     return parser_map
 
@@ -32,11 +39,12 @@ def validate_map_args(parser, args):
     mtx_fname = args.mtx_file
     labels_fname = args.a
     output = args.o
-    run_map(mtx_fname, labels_fname, output)
+    neighbors = args.n
+    run_map(mtx_fname, labels_fname, neighbors, output)
     return
 
 
-def run_map(mtx_fname, labels_fname, output):
+def run_map(mtx_fname, labels_fname, neighbors, output):
     mtx = mmread(mtx_fname)
     labels = pd.read_csv(labels_fname, header=None)
     labels.columns = ["label"]
@@ -52,8 +60,6 @@ def concordex_map(mtx, labels):
     
     @param labels: A numeric or character vector containing the label or class corresponding to each observation. For example, a cell type or cluster ID.
     """
-    # n_neighbors = 20
-    # conn = kneighbors_graph(mtx, n_neighbors, mode="connectivity", include_self=False)
     df = pd.DataFrame(conn.A, index=labels, columns=labels)
     t = df.T.groupby(df.columns).sum().T.groupby(df.columns).sum()
     map_mtx = t.div(t.sum(1), axis=0)
