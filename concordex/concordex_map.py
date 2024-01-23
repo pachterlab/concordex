@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from scipy.io import mmread
 from sklearn.neighbors import kneighbors_graph
-
+from scipy.sparse import csr_matrix
 
 def setup_map_args(parser):
     parser_map = parser.add_parser(
@@ -65,9 +65,39 @@ def check_matrix_dims(x, k):
                 return 4
 
         return None
+    
+    pattern = guess_orientation(x, k=k, dims=dims)
 
-def reorient_matrix():
-    pass
+    if pattern is None:
+        raise ValueError("Cannot determine whether neighbors are oriented on the rows or columns")
+
+    return {
+        1: "none",
+        2: "transpose",
+        3: "expand_row",
+        4: "expand_col"
+    }[pattern]
+
+def reorient_matrix(x, k, how):
+    dims = check_matrix_dims(x, return_dims=True)
+    r, c = dims
+
+    if how == "none":
+        return x
+    elif how == "transpose":
+        return np.transpose(x)
+    elif how == "expand_row":
+        i = np.sort(np.repeat(np.arange(c), k))
+        j = np.ravel(x)
+        data = np.ones(c * k)
+        return csr_matrix((data, (i, j)), shape=(c, c))
+    elif how == "expand_col":
+        i = np.repeat(np.arange(r), k)
+        j = np.ravel(x)
+        data = np.ones(r * k)
+        return csr_matrix((data, (i, j)), shape=(r, r))
+    else:
+        raise ValueError("Invalid 'how' parameter")
     
 
 def validate_map_args(parser, args):
