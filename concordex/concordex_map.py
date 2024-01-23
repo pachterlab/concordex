@@ -12,8 +12,8 @@ def setup_map_args(parser):
     parser_map.add_argument("mtx_file", help="Matrix file")
     parser_map.add_argument(
         "-a",
-        metavar="Assignments",
-        help=("Assignments"),
+        metavar="Labels",
+        help=("Labels"),
         type=str,
         default=None,
     )
@@ -30,26 +30,31 @@ def setup_map_args(parser):
 
 def validate_map_args(parser, args):
     mtx_fname = args.mtx_file
-    assignments_fname = args.a
+    labels_fname = args.a
     output = args.o
-    run_map(mtx_fname, assignments_fname, output)
+    run_map(mtx_fname, labels_fname, output)
     return
 
 
-def run_map(mtx_fname, assignments_fname, output):
+def run_map(mtx_fname, labels_fname, output):
     mtx = mmread(mtx_fname)
-    assignments = pd.read_csv(assignments_fname, header=None)
-    assignments.columns = ["label"]
-    assignments = assignments["label"].values
-    map_mtx = concordex_map(mtx, assignments)
+    labels = pd.read_csv(labels_fname, header=None)
+    labels.columns = ["label"]
+    labels = labels["label"].values
+    map_mtx = concordex_map(mtx, labels)
     map_mtx.to_csv(output, sep="\t")
     return
 
 
-def concordex_map(mtx, assignments):
-    n_neighbors = 20
-    conn = kneighbors_graph(mtx, n_neighbors, mode="connectivity", include_self=False)
-    df = pd.DataFrame(conn.A, index=assignments, columns=assignments)
+def concordex_map(mtx, labels):
+    """
+    @param mtx: A numeric matrix specifying the neighborhood structure of observations. Typically an adjacency matrix produced by a k-Nearest Neighbor algorithm. It can also be a matrix whose rows correspond to each observation and columns correspond to neighbor indices, i.e. matrix form of an adjacency list which can be a matrix due to fixed number of neighbors.
+    
+    @param labels: A numeric or character vector containing the label or class corresponding to each observation. For example, a cell type or cluster ID.
+    """
+    # n_neighbors = 20
+    # conn = kneighbors_graph(mtx, n_neighbors, mode="connectivity", include_self=False)
+    df = pd.DataFrame(conn.A, index=labels, columns=labels)
     t = df.T.groupby(df.columns).sum().T.groupby(df.columns).sum()
     map_mtx = t.div(t.sum(1), axis=0)
     return map_mtx
