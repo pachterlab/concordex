@@ -79,7 +79,7 @@ def check_matrix_dims(x, k):
     }[pattern]
 
 def reorient_matrix(x, k, how):
-    dims = check_matrix_dims(x, k)
+    dims = check_matrix_dims(x, k) # look closely at this
     r, c = dims
 
     if how == "none":
@@ -109,22 +109,23 @@ def validate_map_args(parser, args):
     return
 
 
-def run_map(knn_fname, labels_fname, neighbors, output):
+def run_map(knn_fname, labels_fname, k, output):
     knn = mmread(knn_fname)
     labels = pd.read_csv(labels_fname, header=None)
     labels.columns = ["label"]
     labels = labels["label"].values
-    map_knn = concordex_map(knn, labels, neighbors)
+    map_knn = concordex_map(knn, labels, k)
     map_knn.to_csv(output, sep="\t")
     return
 
 
-def concordex_map(x, labels, neighbors):
+def concordex_map(x, labels, k):
     """
     @param x: A numeric matrix specifying the neighborhood structure of observations. Typically an adjacency matrix produced by a k-Nearest Neighbor algorithm. It can also be a matrix whose rows correspond to each observation and columns correspond to neighbor indices, i.e. matrix form of an adjacency list which can be a matrix due to fixed number of neighbors.
     
     @param labels: A numeric or character vector containing the label or class corresponding to each observation. For example, a cell type or cluster ID.
     """
+    x = check_graph(x, k)
     df = pd.DataFrame(x, index=labels, columns=labels)
     t = df.T.groupby(df.columns).sum().T.groupby(df.columns).sum()
     map_mtx = t.div(t.sum(1), axis=0)
