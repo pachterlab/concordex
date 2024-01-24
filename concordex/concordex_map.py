@@ -36,6 +36,10 @@ def setup_map_args(parser):
     # default value is false
     return parser_map
 
+def check_labels(labels, expected = None):
+    pass
+
+# need to check
 def check_graph(graph, neighbors):
     orientation = check_matrix_dims(graph, neighbors, return_dims=False)
     graph = reorient_matrix(graph, neighbors, how=orientation)
