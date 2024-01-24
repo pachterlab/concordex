@@ -11,7 +11,7 @@ def setup_map_args(parser):
         description="",
         help="",
     )
-    parser_map.add_argument("knn_file", help="Path to KNN graph")
+    parser_map.add_argument("-knn_file", help="Path to KNN graph")
     parser_map.add_argument(
         "-a",
         metavar="Labels",
@@ -27,7 +27,7 @@ def setup_map_args(parser):
         default=None,
     )
     parser_map.add_argument(
-        "-n",
+        "-k",
         metavar="Neighbors",
         help=("Number of neighbors to expect for each observation; defaults to 20"),
         type=int,
@@ -51,9 +51,9 @@ def check_matrix_dims(x, k):
     
     def guess_orientation(x, k, dims):
         if np.diff(dims) == 0:
-            if np.all(np.sum(x, axis=1) / k == 1):
+            if np.all(np.sum(x, axis=1) / k) == 1:
                 return 1
-            if np.all(np.sum(x, axis=0) / k == 1):
+            if np.all(np.sum(x, axis=0) / k) == 1:
                 return 2
         else:
             axis = np.where(dims == k)[0]
@@ -79,7 +79,7 @@ def check_matrix_dims(x, k):
     }[pattern]
 
 def reorient_matrix(x, k, how):
-    dims = check_matrix_dims(x, return_dims=True)
+    dims = check_matrix_dims(x, k)
     r, c = dims
 
     if how == "none":
@@ -104,7 +104,7 @@ def validate_map_args(parser, args):
     knn_fname = args.knn_file
     labels_fname = args.a
     output = args.o
-    neighbors = args.n
+    neighbors = args.k
     run_map(knn_fname, labels_fname, neighbors, output)
     return
 
