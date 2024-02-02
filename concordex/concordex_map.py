@@ -2,7 +2,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from scipy.io import mmread
-from sklearn.neighbors import kneighbors_graph
+# from sklearn.neighbors import kneighbors_graph
 from scipy.sparse import csr_matrix
 
 def setup_map_args(parser):
