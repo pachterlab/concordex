@@ -60,16 +60,16 @@ def run_stat(knn_fname, assignments_fname, output):
     return
 
 
-def concordex_stat(mtx, assignments):
+def concordex_stat(knn, assignments):
     # mapped matrix with normal assignments
-    map_mtx = concordex_map(mtx, assignments)
+    map_mtx = concordex_map(knn, assignments)
 
     # mapped matrix with permuted assignments
     n_iters = 15
     random_map_matrices = []
     for i in range(n_iters):
         random.shuffle(assignments)
-        random_map_matrices.append(concordex_map(mtx, assignments))
+        random_map_matrices.append(concordex_map(knn, assignments))
 
     # compute trace and random
     trace = np.trace(map_mtx) / map_mtx.shape[0]
