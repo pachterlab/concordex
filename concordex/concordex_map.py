@@ -36,8 +36,30 @@ def setup_map_args(parser):
     # default value is false
     return parser_map
 
-def check_labels(labels, expected = None):
-    pass
+def check_labels(labels, expected=None):
+    uniq = list(set(labels))
+    n_uniq = len(uniq)
+
+    if n_uniq < 2:
+        warnings.warn("Must have at least 2 distinct labels")
+        warnings.warn(f"There {'is' if n_uniq == 1 else 'are'} {n_uniq} class label{'s' if n_uniq != 1 else ''}")
+        return False
+
+    if expected is not None:
+        n_labels = len(labels)
+
+        if n_labels != expected:
+            message = (
+                "Too few labels supplied"
+                if n_labels < expected
+                else "Too many labels supplied"
+            )
+            warnings.warn(message)
+            warnings.warn(f"{expected} label{'s' if expected != 1 else ''} are required")
+            warnings.warn(f"You supplied {n_labels} label{'s' if n_labels != 1 else ''}")
+            return False
+
+    return True
 
 # need to check
 def check_graph(graph, neighbors):
