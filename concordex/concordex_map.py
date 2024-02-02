@@ -97,7 +97,7 @@ def check_matrix_dims(x, k):
     if pattern is None:
         raise ValueError("Cannot determine whether neighbors are oriented on the rows or columns")
 
-    return {
+    return dims, {
         1: "none",
         2: "transpose",
         3: "expand_row",
@@ -105,7 +105,7 @@ def check_matrix_dims(x, k):
     }[pattern]
 
 def reorient_matrix(x, k, how):
-    dims = check_matrix_dims(x, k) # look closely at this
+    dims, _ = check_matrix_dims(x, k) # look closely at this
     r, c = dims
 
     if how == "none":
