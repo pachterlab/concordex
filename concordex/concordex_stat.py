@@ -12,7 +12,7 @@ def setup_stat_args(parser):
         description="",
         help="",
     )
-    parser_stat.add_argument("mtx_file", help="Matrix file")
+    parser_stat.add_argument("knn_file", help="KNN graph")
     parser_stat.add_argument(
         "-a",
         metavar="Assignments",
@@ -27,24 +27,32 @@ def setup_stat_args(parser):
         type=str,
         default=None,
     )
+    parser_stat.add_argument(
+        "-k",
+        metavar="Neighbors",
+        help=("Number of neighbors to expect for each observation; defaults to 20"),
+        type=int,
+        default=20,
+    )
     # default value is false
     return parser_stat
 
 
 def validate_stat_args(parser, args):
-    mtx_fname = args.mtx_file
+    knn_fname = args.knn_file
     assignments_fname = args.a
     output = args.o
-    run_stat(mtx_fname, assignments_fname, output)
+    neighbors = args.k
+    run_stat(knn_fname, assignments_fname, neighbors, output)
     return
 
 
-def run_stat(mtx_fname, assignments_fname, output):
-    mtx = mmread(mtx_fname)
+def run_stat(knn_fname, assignments_fname, output):
+    knn = mmread(knn_fname)
     assignments = pd.read_csv(assignments_fname, header=None)
     assignments.columns = ["label"]
     assignments = assignments["label"].values
-    trace, random_trace, corrected_trace = concordex_stat(mtx, assignments)
+    trace, random_trace, corrected_trace = concordex_stat(knn, assignments)
     # Missing format for output file containing trace values
     print(f"Trace: {trace}")
     print(f"Average random trace: {random_trace}")
