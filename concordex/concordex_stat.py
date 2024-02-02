@@ -15,8 +15,8 @@ def setup_stat_args(parser):
     parser_stat.add_argument("knn_file", help="KNN graph")
     parser_stat.add_argument(
         "-a",
-        metavar="Assignments",
-        help=("Assignments"),
+        metavar="labels",
+        help=("labels"),
         type=str,
         default=None,
     )
@@ -40,19 +40,19 @@ def setup_stat_args(parser):
 
 def validate_stat_args(parser, args):
     knn_fname = args.knn_file
-    assignments_fname = args.a
+    labels_fname = args.a
     output = args.o
     neighbors = args.k
-    run_stat(knn_fname, assignments_fname, neighbors, output)
+    run_stat(knn_fname, labels_fname, neighbors, output)
     return
 
 
-def run_stat(knn_fname, assignments_fname, output):
+def run_stat(knn_fname, labels_fname, output):
     knn = mmread(knn_fname)
-    assignments = pd.read_csv(assignments_fname, header=None)
-    assignments.columns = ["label"]
-    assignments = assignments["label"].values
-    trace, random_trace, corrected_trace = concordex_stat(knn, assignments)
+    labels = pd.read_csv(labels_fname, header=None)
+    labels.columns = ["label"]
+    labels = labels["label"].values
+    trace, random_trace, corrected_trace = concordex_stat(knn, labels)
     # Missing format for output file containing trace values
     print(f"Trace: {trace}")
     print(f"Average random trace: {random_trace}")
@@ -60,16 +60,16 @@ def run_stat(knn_fname, assignments_fname, output):
     return
 
 
-def concordex_stat(knn, assignments):
-    # mapped matrix with normal assignments
-    map_mtx = concordex_map(knn, assignments)
+def concordex_stat(knn, labels):
+    # mapped matrix with normal labels
+    map_mtx = concordex_map(knn, labels)
 
-    # mapped matrix with permuted assignments
+    # mapped matrix with permuted labels
     n_iters = 15
     random_map_matrices = []
     for i in range(n_iters):
-        random.shuffle(assignments)
-        random_map_matrices.append(concordex_map(knn, assignments))
+        random.shuffle(labels)
+        random_map_matrices.append(concordex_map(knn, labels))
 
     # compute trace and random
     trace = np.trace(map_mtx) / map_mtx.shape[0]
