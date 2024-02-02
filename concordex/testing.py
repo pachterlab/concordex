@@ -1,4 +1,4 @@
-from .concordex_map import check_matrix_dims, reorient_matrix
+from concordex_map import check_matrix_dims, reorient_matrix
 
 import numpy as np
 from scipy.sparse import csr_matrix
