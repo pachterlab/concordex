@@ -3,7 +3,6 @@ from scipy.sparse import csr_matrix
 
 def check_matrix_dims(x, k):
     dims = np.array(np.shape(x))
-    # print(f'dims {dims}')
     
     def guess_orientation(x, k, dims):
         if np.diff(dims) == 0:
@@ -46,22 +45,21 @@ def reorient_matrix(x, k, how):
         i = np.sort(np.repeat(np.arange(c), k))
         j = np.ravel(x)
         data = np.ones(c * k)
-
         return csr_matrix((data, (i, j)), shape=(c, c))
     elif how == "expand_col":
         i = np.repeat(np.arange(r), k)
         j = np.ravel(x)
         data = np.ones(r * k)
-        print(f"sizes: {np.shape(i)}, {np.shape(j)}, {np.shape(data)}")
-
         return csr_matrix((data, (i, j)), shape=(r, r))
     else:
         raise ValueError("Invalid 'how' parameter")
     
 matrix_expand_row = np.array([[0, 1],
-                              [2, 3],
-                              [4, 5]])
+                              [2, 1],
+                              [1, 0]])
 
 k_expand_row = 2
 reoriented_expand_row = reorient_matrix(matrix_expand_row, k_expand_row, "expand_col")
 print(reoriented_expand_row)  # Should return a sparse matrix with expanded rows
+
+

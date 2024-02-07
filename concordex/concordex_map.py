@@ -74,7 +74,6 @@ def check_graph(graph, neighbors):
 
 def check_matrix_dims(x, k):
     dims = np.array(np.shape(x))
-    # print(f'dims {dims}')
     
     def guess_orientation(x, k, dims):
         if np.diff(dims) == 0:
@@ -86,9 +85,9 @@ def check_matrix_dims(x, k):
             axis = np.where(dims == k)[0] # axis = which(dims == k)
             if len(axis) == 0:
                 return None
-            if 0 in axis:
+            if axis[0] == 0:
                 return 3
-            if 1 in axis:
+            if axis[0] == 1:
                 return 4
 
         return None
@@ -104,6 +103,7 @@ def check_matrix_dims(x, k):
         3: "expand_row",
         4: "expand_col"
     }[pattern]
+
 
 def reorient_matrix(x, k, how):
     dims, _ = check_matrix_dims(x, k) # look closely at this
@@ -122,7 +122,6 @@ def reorient_matrix(x, k, how):
         i = np.repeat(np.arange(r), k)
         j = np.ravel(x)
         data = np.ones(r * k)
-        print(f"sizes: {np.shape(i)}, {np.shape(j)}, {np.shape(data)}")
         return csr_matrix((data, (i, j)), shape=(r, r))
     else:
         raise ValueError("Invalid 'how' parameter")
