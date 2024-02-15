@@ -3,7 +3,7 @@ import numpy as np
 from scipy.io import mmread
 import random
 
-from .concordex_map import concordex_map
+from concordex_map import concordex_map # why was there a dot
 
 
 def setup_stat_args(parser):

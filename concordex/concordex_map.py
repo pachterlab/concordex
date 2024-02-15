@@ -63,7 +63,7 @@ def check_labels(labels, expected=None):
 
 # need to check
 def check_graph(graph, neighbors):
-    orientation = check_matrix_dims(graph, neighbors, return_dims=False)
+    orientation = check_matrix_dims(graph, neighbors)
     graph = reorient_matrix(graph, neighbors, how=orientation)
     
     diag_sum = np.trace(graph)
@@ -119,7 +119,7 @@ def reorient_matrix(x, k, how):
         data = np.ones(c * k)
         return csr_matrix((data, (i, j)), shape=(c, c))
     elif how == "expand_col":
-        i = np.repeat(np.arange(r), k)
+        i = np.sort(np.repeat(np.arange(r), k))
         j = np.ravel(x)
         data = np.ones(r * k)
         return csr_matrix((data, (i, j)), shape=(r, r))

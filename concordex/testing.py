@@ -29,7 +29,7 @@ matrix_expand_row = np.array([[0, 1],
 
 k_expand_row = 2
 print(check_matrix_dims(matrix_expand_row, k_expand_row))  # Should return 'expand_row'
-reoriented_expand_row = reorient_matrix(matrix_expand_row, k_expand_row, "expand_col")
+reoriented_expand_row = reorient_matrix(matrix_expand_row, k_expand_row, "expand_row")
 print(reoriented_expand_row)  # Should return a sparse matrix with expanded rows
 
 
