@@ -205,9 +205,13 @@ def run_map(knn_fname, labels_fname, k, output):
 
 def concordex_map(x, labels, k):
     """
-    @param x: A numeric matrix specifying the neighborhood structure of observations. Typically an adjacency matrix produced by a k-Nearest Neighbor algorithm. It can also be a matrix whose rows correspond to each observation and columns correspond to neighbor indices, i.e. matrix form of an adjacency list which can be a matrix due to fixed number of neighbors.
+    Parameters:
+    x: A numeric matrix specifying the neighborhood structure of observations. Typically an adjacency matrix produced by a k-Nearest Neighbor algorithm. It can also be a matrix whose rows correspond to each observation and columns correspond to neighbor indices, i.e. matrix form of an adjacency list which can be a matrix due to fixed number of neighbors.
     
-    @param labels: A numeric or character vector containing the label or class corresponding to each observation. For example, a cell type or cluster ID.
+    labels: A numeric or character vector containing the label or class corresponding to each observation. For example, a cell type or cluster ID.
+    
+    Returns: 
+    map_mtx
     """
     x = check_graph(x, k)
     df = pd.DataFrame(x, index=labels, columns=labels)

@@ -63,15 +63,15 @@ def run_stat(knn_fname, labels_fname, output):
     labels = pd.read_csv(labels_fname, header=None)
     labels.columns = ["label"]
     labels = labels["label"].values
-    trace, random_trace, corrected_trace = concordex_stat(knn, labels)
+    trace, corrected_trace, random_trace = calculate_concordex(knn, labels)
     # Missing format for output file containing trace values
-    print(f"Trace: {trace}")
-    print(f"Average random trace: {random_trace}")
-    print(f"Corrected trace: {corrected_trace}")
+    print(f"Concordex: {trace}")
+    print(f"Corrected concordex: {corrected_trace}")
+    print(f"Mean random concordex: {random_trace}")
     return
 
 
-def concordex_stat(knn, labels):
+def calculate_concordex(knn, labels):
     """
     Computes concordex.
 
@@ -80,9 +80,9 @@ def concordex_stat(knn, labels):
     - labels: The labels corresponding to the data points.
 
     Returns:
-    - trace (float): The trace of the mapped matrix divided by its size.
-    - random_trace (float): The average trace of randomly permuted mapped matrices divided by their size.
-    - corrected_trace (float): The ratio of the trace to the average random trace.
+    - concordex (float): The trace of the mapped matrix divided by its size.
+    - mean random concordex (float): The average trace of randomly permuted mapped matrices divided by their size.
+    - corrected concordex (float): The ratio of the trace to the average random trace.
 
     """
     # mapped matrix with normal labels
@@ -104,4 +104,4 @@ def concordex_stat(knn, labels):
         ]
     )
     corrected_trace = trace / random_trace
-    return trace, random_trace, corrected_trace
+    return trace, corrected_trace, random_trace
