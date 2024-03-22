@@ -48,6 +48,17 @@ def validate_stat_args(parser, args):
 
 
 def run_stat(knn_fname, labels_fname, output):
+    """
+    Calculates concordex_stat.
+
+    Args:
+        knn_fname (str): The file path of the knn data.
+        labels_fname (str): The file path of the labels data.
+        output (str): The file path to save the output.
+
+    Returns:
+        None
+    """
     knn = mmread(knn_fname)
     labels = pd.read_csv(labels_fname, header=None)
     labels.columns = ["label"]
@@ -61,6 +72,19 @@ def run_stat(knn_fname, labels_fname, output):
 
 
 def concordex_stat(knn, labels):
+    """
+    Computes concordex.
+
+    Parameters:
+    - knn: The k-nearest neighbors matrix.
+    - labels: The labels corresponding to the data points.
+
+    Returns:
+    - trace (float): The trace of the mapped matrix divided by its size.
+    - random_trace (float): The average trace of randomly permuted mapped matrices divided by their size.
+    - corrected_trace (float): The ratio of the trace to the average random trace.
+
+    """
     # mapped matrix with normal labels
     map_mtx = concordex_map(knn, labels)
 
