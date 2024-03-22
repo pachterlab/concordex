@@ -63,9 +63,10 @@ def check_labels(labels, expected=None):
 
 # need to check
 def check_graph(graph, neighbors):
-    orientation = check_matrix_dims(graph, neighbors)
+    _, orientation = check_matrix_dims(graph, neighbors)
     graph = reorient_matrix(graph, neighbors, how=orientation)
     
+    print(graph)
     diag_sum = np.trace(graph)
     if diag_sum != 0:
         warnings.warn("Some nodes in the graph are self-referential. There should not be an edge between a node and itself.")
@@ -73,16 +74,42 @@ def check_graph(graph, neighbors):
     return graph
 
 def check_matrix_dims(x, k):
+    """
+    Check the dimensions of a matrix and determine the orientation of its neighbors.
+
+    Parameters:
+    x (numpy.ndarray): The input matrix.
+    k (int): The number of neighbors.
+
+    Returns:
+    tuple: A tuple containing the dimensions of the matrix and a pattern indicating the orientation of the neighbors.
+
+    Raises:
+    ValueError: If the orientation of the neighbors cannot be determined.
+
+    """
     dims = np.array(np.shape(x))
     
     def guess_orientation(x, k, dims):
+        """
+        Guess the orientation of the neighbors based on the dimensions of the matrix.
+
+        Parameters:
+        x (numpy.ndarray): The input matrix.
+        k (int): The number of neighbors.
+        dims (numpy.ndarray): The dimensions of the matrix.
+
+        Returns:
+        int: A pattern indicating the orientation of the neighbors.
+
+        """
         if np.diff(dims) == 0:
             if np.all(np.sum(x, axis=1) / k) == 1:
                 return 1
             if np.all(np.sum(x, axis=0) / k) == 1:
                 return 2
         else:
-            axis = np.where(dims == k)[0] # axis = which(dims == k)
+            axis = np.where(dims == k)[0]
             if len(axis) == 0:
                 return None
             if axis[0] == 0:
@@ -98,7 +125,7 @@ def check_matrix_dims(x, k):
         raise ValueError("Cannot determine whether neighbors are oriented on the rows or columns")
 
     return dims, {
-        1: "none",
+        1: "no_reorient",
         2: "transpose",
         3: "expand_row",
         4: "expand_col"
@@ -106,10 +133,28 @@ def check_matrix_dims(x, k):
 
 
 def reorient_matrix(x, k, how):
-    dims, _ = check_matrix_dims(x, k) # look closely at this
-    r, c = dims
+    """
+    Reorients the given matrix based on the specified orientation pattern.
 
-    if how == "none":
+    Parameters:
+    x (numpy.ndarray or scipy.sparse.csr_matrix): The matrix to be reoriented.
+    k (int): The number of neighbors.
+    how (str): The orientation pattern. Can be one of the following:
+        - "no_reorient": No reorientation needed.
+        - "transpose": Transpose the matrix.
+        - "expand_row": Expand the matrix by repeating rows.
+        - "expand_col": Expand the matrix by repeating columns.
+
+    Returns: 
+    Reoriented matrix
+
+    Raises:
+    ValueError: If the 'how' parameter is invalid
+    """
+    dims, _ = check_matrix_dims(x, k)
+    r, c = dims
+    
+    if how == "no_reorient":
         return x
     elif how == "transpose":
         return np.transpose(x)
@@ -137,6 +182,18 @@ def validate_map_args(parser, args):
 
 
 def run_map(knn_fname, labels_fname, k, output):
+    """
+    Runs concordex_map calculation on given k-nearest neighbors (knn) matrix.
+
+    Parameters:
+    knn_fname (str): The file path to the k-nearest neighbors matrix file.
+    labels_fname (str): The file path to the labels file.
+    k (int): The number of nearest neighbors to consider for each data point.
+    output (str): The file path to save the MAP results.
+
+    Returns:
+    None
+    """
     knn = mmread(knn_fname)
     labels = pd.read_csv(labels_fname, header=None)
     labels.columns = ["label"]
