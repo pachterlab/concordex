@@ -1,21 +1,19 @@
 
-# Comparison between R and Python functionality
+# Compatibility between ConcordexR and Concordex Python
 
-| R Function             | Python Function               | R Parameters                                       | Python Parameters                                   |
-|-------------|-----------------------|------------------|---------------|
-| calculate_concordex          | run_map                 | x, labels, k=20, return=True                  | x, labels, k |
-| concordex_stat         | run_stat                | graph, labels, return = False        | knn, labels         |
+## Comparison between R and Python functionality
 
+| Output | R Function | Python Script| Python Command Line |
+|--------|------------|--------------|---------------------|
+| Return Uncorrected Concordex | `res <- calculateConcordex(x, labels, k = 20, n.iter = 15, return.map = FALSE, BPPARAM = SerialParam())`, `$concordex` | `trace, _, _ = concordex_stat(knn, labels)` | `concordex map [path to knn] -a [path to labels]` |
+| Return Concordex Ratio | `res <- calculateConcordex(x, labels, k = 20, n.iter = 15, return.map = FALSE, BPPARAM = SerialParam())`, `$concordex_ratio` | `_, corrected_trace, _ = concordex_stat(knn, labels)`   | `concordex stat [path to knn] -a [path to labels]` | 
+| Return Mean Random Concordex | `res <- calculateConcordex(x, labels, k = 20, n.iter = 15, return.map = FALSE, BPPARAM = SerialParam())`, `$mean_random_concordex` | `_, _, random_trace = concordex_stat(knn, labels)`   | `concordex stat [path to knn] -a [path to labels]` | 
+| Return Concordex Map Matrix | `res <- calculateConcordex(x, labels, k = 20, n.iter = 15, return.map = TRUE, BPPARAM = SerialParam())`, `$map` | `map_mtx = concordex_map(x, labels, k)` | `concordex map [path to knn] -a [path to labels]` |
+| Plot Concordex Map Matrix as Heatmap | `res <- calculateConcordex(x, labels, k = 20, n.iter = 15, return.map = TRUE, BPPARAM = SerialParam())`, `heatConcordex(res)` | N/A | N/A |
 
-# Comparison 2
+## Terminology
 
-| Output| R Command | Python Command | Python Script Code |
-| Calculate Concordex Map |--| concordex map| validate_map_args ||
-
-
-
-<!-- | setup_map_args         | setup_map_args                | parser                                             | parser, -knn_file, -a (optional), -o (optional), -k (default: 20) |
-| setup_stat_args        | setup_stat_args               | parser                                             | parser, -knn_file, -a (optional), -o (optional), -k (default: 20) |
-| validate_map_args      | validate_map_args             | parser, args                                       | parser, args                                       |
-| validate_stat_args     | validate_stat_args            | parser, args                                       | parser, args                                       |
- -->
+- In the Python version, *concordex* is called *trace* or *uncorrected concordex*.
+- *Concordex ratio* can be called *corrected trace* or *corrected concordex*.
+- *Mean random concordex* and *random_trace* are interchangeable.
+- `knn` and `x` both refer to the knn matrix to be inputted (which cannot be a sparse matrix).

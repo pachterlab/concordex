@@ -180,7 +180,6 @@ def validate_map_args(parser, args):
     run_map(knn_fname, labels_fname, neighbors, output)
     return
 
-
 def run_map(knn_fname, labels_fname, k, output):
     """
     Runs concordex_map calculation on given k-nearest neighbors (knn) matrix.
