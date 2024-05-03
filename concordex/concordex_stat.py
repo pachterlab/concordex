@@ -12,7 +12,7 @@ def setup_stat_args(parser):
         description="",
         help="",
     )
-    parser_stat.add_argument("knn_file", help="KNN graph")
+    parser_stat.add_argument("knn_file", help="KNN matrix")
     parser_stat.add_argument(
         "-a",
         metavar="labels",
