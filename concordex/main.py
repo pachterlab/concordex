@@ -4,17 +4,10 @@ import sys
 from .concordex_map import setup_map_args, validate_map_args
 from .concordex_stat import setup_stat_args, validate_stat_args
 
-# Steps to add new subcommands
-# Create concordex_subcommand.py (create setup_subcmd_args, validate_subcmd_args, run_subcmd in that file)
-# (in this file) from concordex_subcmd import setup_subcmd_args, validate_subcmd_args
-# Add setup_subcmd_args to command_to_parser along with its key==str(subcmd)
-# Add validate_subcmd_args to COMMAND_TO_FUNCTION along with its key==str(subcmd)
-
-
 def main():
     # setup parsers
     parser = argparse.ArgumentParser(
-        description=f"concordex {__version__}: Assess clustering"
+        description=f"concordex {__version__}: A clustering diagnostic to replace UMAP"
     )
     subparsers = parser.add_subparsers(
         dest="command",

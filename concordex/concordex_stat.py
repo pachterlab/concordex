@@ -3,7 +3,7 @@ import numpy as np
 from scipy.io import mmread
 import random
 
-from .concordex_map import concordex_map
+from concordex_map import concordex_map 
 
 
 def setup_stat_args(parser):
@@ -12,11 +12,11 @@ def setup_stat_args(parser):
         description="",
         help="",
     )
-    parser_stat.add_argument("mtx_file", help="Matrix file")
+    parser_stat.add_argument("knn_file", help="KNN matrix")
     parser_stat.add_argument(
         "-a",
-        metavar="Assignments",
-        help=("Assignments"),
+        metavar="labels",
+        help=("labels"),
         type=str,
         default=None,
     )
@@ -27,41 +27,73 @@ def setup_stat_args(parser):
         type=str,
         default=None,
     )
+    parser_stat.add_argument(
+        "-k",
+        metavar="Neighbors",
+        help=("Number of neighbors to expect for each observation; defaults to 20"),
+        type=int,
+        default=20,
+    )
     # default value is false
     return parser_stat
 
 
 def validate_stat_args(parser, args):
-    mtx_fname = args.mtx_file
-    assignments_fname = args.a
+    knn_fname = args.knn_file
+    labels_fname = args.a
     output = args.o
-    run_stat(mtx_fname, assignments_fname, output)
+    neighbors = args.k
+    run_stat(knn_fname, labels_fname, neighbors, output)
     return
 
 
-def run_stat(mtx_fname, assignments_fname, output):
-    mtx = mmread(mtx_fname)
-    assignments = pd.read_csv(assignments_fname, header=None)
-    assignments.columns = ["label"]
-    assignments = assignments["label"].values
-    trace, random_trace, corrected_trace = concordex_stat(mtx, assignments)
+def run_stat(knn_fname, labels_fname, output):
+    """
+    Calculates concordex_stat.
+
+    Args:
+        knn_fname (str): The file path of the knn data.
+        labels_fname (str): The file path of the labels data.
+        output (str): The file path to save the output.
+
+    Returns:
+        None
+    """
+    knn = mmread(knn_fname)
+    labels = pd.read_csv(labels_fname, header=None)
+    labels.columns = ["label"]
+    labels = labels["label"].values
+    trace, corrected_trace, random_trace = calculate_concordex(knn, labels)
     # Missing format for output file containing trace values
-    print(f"Trace: {trace}")
-    print(f"Average random trace: {random_trace}")
-    print(f"Corrected trace: {corrected_trace}")
+    print(f"Concordex: {trace}")
+    print(f"Corrected concordex: {corrected_trace}")
+    print(f"Mean random concordex: {random_trace}")
     return
 
 
-def concordex_stat(mtx, assignments):
-    # mapped matrix with normal assignments
-    map_mtx = concordex_map(mtx, assignments)
+def calculate_concordex(knn, labels):
+    """
+    Computes concordex.
 
-    # mapped matrix with permuted assignments
+    Parameters:
+    - knn: The k-nearest neighbors matrix.
+    - labels: The labels corresponding to the data points.
+
+    Returns:
+    - concordex (float): The trace of the mapped matrix divided by its size.
+    - mean random concordex (float): The average trace of randomly permuted mapped matrices divided by their size.
+    - corrected concordex (float): The ratio of the trace to the average random trace.
+
+    """
+    # mapped matrix with normal labels
+    map_mtx = concordex_map(knn, labels)
+
+    # mapped matrix with permuted labels
     n_iters = 15
     random_map_matrices = []
     for i in range(n_iters):
-        random.shuffle(assignments)
-        random_map_matrices.append(concordex_map(mtx, assignments))
+        random.shuffle(labels)
+        random_map_matrices.append(concordex_map(knn, labels))
 
     # compute trace and random
     trace = np.trace(map_mtx) / map_mtx.shape[0]
@@ -72,4 +104,4 @@ def concordex_stat(mtx, assignments):
         ]
     )
     corrected_trace = trace / random_trace
-    return trace, random_trace, corrected_trace
+    return trace, corrected_trace, random_trace
