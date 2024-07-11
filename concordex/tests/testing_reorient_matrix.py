@@ -61,5 +61,3 @@ matrix_expand_row = np.array([[0, 1],
 k_expand_row = 2
 reoriented_expand_row = reorient_matrix(matrix_expand_row, k_expand_row, "expand_col")
 print(reoriented_expand_row)  # Should return a sparse matrix with expanded rows
-
-

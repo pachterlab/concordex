@@ -41,5 +41,3 @@ k_expand_col = 2
 print(check_matrix_dims(matrix_expand_col, k_expand_col))  # Should return 'expand_col'
 reoriented_expand_col = reorient_matrix(matrix_expand_col, k_expand_col, "expand_col")
 print(reoriented_expand_col)  # Should return a sparse matrix with expanded columns
-
-# additional test: go from KNN matrix to computation of concordex
