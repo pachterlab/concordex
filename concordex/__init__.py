@@ -1,1 +1,3 @@
-__version__='0.0.1'
+"""Identification of spatial homogeneous regions"""
+
+__version__ = '1.0.0'
