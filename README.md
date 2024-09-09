@@ -24,13 +24,13 @@ cite our recent bioRxiv preprint
 > 2023. <https://doi.org/10.1101/2023.06.28.546949>.
 
     @article {Jackson2023.06.28.546949, 
-    author = {Jackson, Kayla C. and Booeshaghi, A. Sina and G{'a}lvez-Merch{'a}n, {'A}ngel and Moses, Lambda and Chari, Tara and Kim, Alexandra and Pachter, Lior}, 
-    title = {Identification of spatial homogeneous regions in tissues with concordex}, 
-    year = {2024}, 
-    doi = {10.1101/2023.06.28.546949}, 
-    publisher = {Cold Spring Harbor Laboratory}, 
-    URL = {<https://www.biorxiv.org/content/early/2024/07/18/2023.06.28.546949>},
-    journal = {bioRxiv} 
+        author = {Jackson, Kayla C. and Booeshaghi, A. Sina and G{'a}lvez-Merch{'a}n, {'A}ngel and Moses, Lambda and Chari, Tara and Kim, Alexandra and Pachter, Lior}, 
+        title = {Identification of spatial homogeneous regions in tissues with concordex}, 
+        year = {2024}, 
+        doi = {10.1101/2023.06.28.546949}, 
+        publisher = {Cold Spring Harbor Laboratory}, 
+        URL = {<https://www.biorxiv.org/content/early/2024/07/18/2023.06.28.546949>},
+        journal = {bioRxiv} 
 }
 
 ## Maintainer
