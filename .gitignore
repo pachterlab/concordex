@@ -1,1 +1,16 @@
+# Python build files
+__pycache__/
 **/__pycache__/
+
+*.egg-info/
+
+/dist/
+/build/
+/*-env/
+/env-*/
+/environment.yml
+
+# IDEs and OS things
+.DS_Store
+/.vscode/
+.ipynb_checkpoints/
