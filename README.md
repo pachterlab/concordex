@@ -19,9 +19,9 @@ If you’d like to use the `concordex` package in your research, please
 cite our recent bioRxiv preprint
 
 > Jackson, K.; Booeshaghi, A. S.; Gálvez-Merchán, Á.; Moses, L.; Chari,
-> T.; Pachter, L. Quantitative assessment of single-cell RNA-seq
-> clustering with CONCORDEX. bioRxiv (Cold Spring Harbor Laboratory)
-> 2023. <https://doi.org/10.1101/2023.06.28.546949>.
+> T.; Kim, A.; Pachter, L. Identification of spatial homogeneous regions in tissues 
+> with concordex. bioRxiv (Cold Spring Harbor Laboratory) 2023. 
+> <https://doi.org/10.1101/2023.06.28.546949>.
 
     @article {Jackson2023.06.28.546949, 
         author = {Jackson, Kayla C. and Booeshaghi, A. Sina and G{'a}lvez-Merch{'a}n, {'A}ngel and Moses, Lambda and Chari, Tara and Kim, Alexandra and Pachter, Lior}, 
