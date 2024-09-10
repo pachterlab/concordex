@@ -70,6 +70,7 @@ def consolidate(
     nbc_index_dict = {
         "nbc_key": nbc_key,
         "labels_found" : labels.labelnames,
+        "nbc_colnames" : labels.nbccolumns,
         "params": {
             "compute_similarity": compute_similarity
         },
