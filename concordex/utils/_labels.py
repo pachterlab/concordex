@@ -1,4 +1,5 @@
 import re
+from warnings import warn
 
 import numpy as np
 import pandas as pd
@@ -92,10 +93,11 @@ class Labels:
             else: 
                 # Check if labels are in .obsm
                 lookup_key = self._lookup
-                if not isinstance(lookup_key, str) and len(lookup_key) > 1:
+                if not isinstance(lookup_key, str):
                     lookup_key = self._lookup[0]
-                    raise Warning(
-                        f"Looking for labels in `adata.obsm`. Only the first key, {self._lookup[0]}, will be used."
+                    warn(
+                        f"Looking for labels in `adata.obsm`. Only the first key, {lookup_key}, will be used.",
+                        category=UserWarning
                     )
                 
                 if lookup_key in adata.obsm.keys():
@@ -109,7 +111,7 @@ class Labels:
 
                 else:
                     raise KeyError(
-                        f"{self._lookup} not found in `adata`"
+                        f"{lookup_key} not found in `adata`"
                         )
             self._labelshape = (_values.shape)
             self._values = _values
