@@ -141,7 +141,7 @@ class Labels:
     
     @staticmethod
     def collapse(values, sep="_"):
-        return np.apply_along_axis(sep.join, 1, values.astype("U"))
+        return np.array(["_".join(row) for row in values])
 
 
     
