@@ -1,6 +1,12 @@
 import numpy as np
 from anndata import AnnData
 
+from ..neighbors._neighborhood import (
+    compute_neighbors, 
+    consolidate
+    )
+
+
 def calculate_concordex(
     adata: AnnData, 
     labels, 
@@ -40,14 +46,13 @@ def calculate_concordex(
     """
 
     if index_key and index_key in adata.obsm.keys():
-        
         consolidate(adata, labels, 
             index_key=index_key, compute_similarity=compute_similarity)
         
     else: 
         if index_key is None:
             index_key = "index"
-            
+
         compute_neighbors(adata, 
             use_rep=use_rep, n_neighbors=n_neighbors, metric=metric, 
             metric_params=metric_params, n_jobs=n_jobs)
