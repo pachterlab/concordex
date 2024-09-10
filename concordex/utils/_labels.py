@@ -51,6 +51,17 @@ class Labels:
             raise AttributeError("Ensure that labels are discrete and call `extract(adata)`.")
         return self._discretelabelsunique
 
+    @property
+    def nbccolumns(self):
+        if not hasattr(self, '_labelcolumns'):
+            if not hasattr(self, '_values'):
+                return []
+            else:
+                _nattr = self._values.shape[1]
+                self._labelcolumns = [f"X_{i}" for i in range(_nattr)]
+        
+        return self._labelcolumns
+
     def extract(self, adata: AnnData):
         """
         Extract labels from adata.obs (or adata.obsm) and update 
@@ -74,7 +85,7 @@ class Labels:
                     _values_ohe = self.one_hot_encode(self._discretelabelscollapsed)
 
                     self._discretelabelsunique = _values_ohe.columns.tolist()
-                    self._discretelabelsorder = _values_ohe.columns.tolist()
+                    self._labelcolumns = _values_ohe.columns.tolist()
 
                     _values = _values_ohe.values
 
@@ -91,6 +102,11 @@ class Labels:
                     self._labeltype = 'continuous'
                     _values = adata.obsm[lookup_key]
                     self._labelnames = lookup_key
+
+                    # Keep track of colnames for NBC
+                    _nattr = _values.shape[1]
+                    self._labelcolumns = [f"{lookup_key}_{i}" for i in range(_nattr)]
+
                 else:
                     raise KeyError(
                         f"{self._lookup} not found in `adata`"
