@@ -77,7 +77,8 @@ class Labels:
                 types = [dt.name for dt in labels_sub.dtypes]
                 
                 self._labelnames = labels_sub.columns.tolist() 
-
+                self._labelcolumns = labels_sub.columns.tolist() 
+                
                 self._validate(types) 
                 _values = labels_sub.values
                 
@@ -144,7 +145,3 @@ class Labels:
     @staticmethod
     def collapse(values, sep="_"):
         return np.array(["_".join(row) for row in values])
-
-
-    
-    
