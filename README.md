@@ -11,7 +11,22 @@ pip install git+https://github.com/pachterlab/concordex.git
 
 ## Usage
 
-After installing, `concordex` can be run by simply as follows: 
+After installing, `concordex` can be run as follows: 
+```
+import scanpy as sc 
+from concordex.tools import calculate_concordex
+
+ad = sc.datasets.pbmc68k_reduced()
+
+# Compute concordex with discrete labels
+calculate_concordex(ad, 'louvain', n_neighbors=10)
+
+# Neighborhood consolidation information is stored in `adata.obsm`
+ad.obsm['nbc'][:3]
+
+# The column names are stored in `adata.uns`
+ad.uns['nbc_params']['nbc_colnames']
+```
 
 ## Citation
 
