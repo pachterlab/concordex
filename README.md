@@ -46,7 +46,7 @@ cite our recent bioRxiv preprint
         publisher = {Cold Spring Harbor Laboratory}, 
         URL = {<https://www.biorxiv.org/content/early/2024/07/18/2023.06.28.546949>},
         journal = {bioRxiv} 
-}
+    }
 
 ## Maintainer
 
