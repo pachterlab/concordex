@@ -1,3 +1,57 @@
 [build-system]
 requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "concordex"
+version = "1.0.2"
+url = "https://github.com/pachterlab/concordex"
+description = "Identification of spatial homogeneous regions with concordex"
+readme = "README.md"
+python = ">=3.9"
+authors = [
+    {name = "Kayla Jackson", email = kaylajac@caltech.edu"} , 
+    {name = "A. Sina Booeshaghi", email = "sinab@berkeley.edu"},
+    {name = "Angel Galvez-Merchan", email = "angelgalvez94@gmail.com"},
+    {name = "Alexandra Kim", email = ""}
+]
+maintainers = [{name = "Kayla Jackson", email = "kaylajac@caltech.edu"}]
+license = {file = "LICENSE"}
+kewyords = ["SingleCell", "Clustering", "Spatial", "Transcriptomics"]
+dependencies = [
+    "anndata>=0.8",
+	"numpy>=1.23",
+	"pandas>=1.5",
+	"scikit-learn>=0.24"
+]
+classifiers = [
+	"Environment :: Console",
+	"Intended Audience :: Science/Research",
+	"License :: OSI Approved :: MIT License",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python :: 3.6",
+	"Programming Language :: Python :: 3.7",
+	"Programming Language :: Python :: 3.8",
+	"Programming Language :: Python :: 3.9",
+	"Programming Language :: Python :: 3.10",
+	"Topic :: Scientific/Engineering :: Bio-Informatics",
+	"Topic :: Utilities"
+]
+
+[tool.setuptools]
+packages = { find = {} }
+
+[tool.bumpversion]
+current_version = 1.0.2
+commit = True
+tag = False
+files = [
+    "concordex/__init__.py",
+    "README.md"
+]
+
+[tool.flake8]
+exclude = [".git", ".github", "__pycache__", "build", "dist"]
+statistics = true
+max-line-length = 88
+extend-ignore = ["E203", "E501"]
