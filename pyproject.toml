@@ -42,9 +42,9 @@ classifiers = [
 packages = { find = {} }
 
 [tool.bumpversion]
-current_version = 1.0.2
-commit = True
-tag = False
+current_version = "1.0.2"
+commit = true
+tag = false
 files = [
     "concordex/__init__.py",
     "README.md"
