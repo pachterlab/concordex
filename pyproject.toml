@@ -10,7 +10,7 @@ description = "Identification of spatial homogeneous regions with concordex"
 readme = "README.md"
 python = ">=3.9"
 authors = [
-    {name = "Kayla Jackson", email = kaylajac@caltech.edu"} , 
+    {name = "Kayla Jackson", email = "kaylajac@caltech.edu"} , 
     {name = "A. Sina Booeshaghi", email = "sinab@berkeley.edu"},
     {name = "Angel Galvez-Merchan", email = "angelgalvez94@gmail.com"},
     {name = "Alexandra Kim", email = ""}
