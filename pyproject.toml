@@ -5,19 +5,18 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "concordex"
 version = "1.0.2"
-url = "https://github.com/pachterlab/concordex"
 description = "Identification of spatial homogeneous regions with concordex"
 readme = "README.md"
-python = ">=3.9"
+requires-python = ">=3.9"
 authors = [
     {name = "Kayla Jackson", email = "kaylajac@caltech.edu"} , 
     {name = "A. Sina Booeshaghi", email = "sinab@berkeley.edu"},
     {name = "Angel Galvez-Merchan", email = "angelgalvez94@gmail.com"},
-    {name = "Alexandra Kim", email = ""}
+    {name = "Alexandra Kim", email = "alexandrasuriya@gmail.com"}
 ]
 maintainers = [{name = "Kayla Jackson", email = "kaylajac@caltech.edu"}]
 license = {file = "LICENSE"}
-kewyords = ["SingleCell", "Clustering", "Spatial", "Transcriptomics"]
+keywords = ["SingleCell", "Clustering", "Spatial", "Transcriptomics"]
 dependencies = [
     "anndata>=0.8",
 	"numpy>=1.23",
@@ -37,6 +36,8 @@ classifiers = [
 	"Topic :: Scientific/Engineering :: Bio-Informatics",
 	"Topic :: Utilities"
 ]
+[project.urls]
+Repository = "https://github.com/pachterlab/concordex"
 
 [tool.setuptools]
 packages = { find = {} }
