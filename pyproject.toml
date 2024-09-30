@@ -36,6 +36,7 @@ classifiers = [
 	"Topic :: Scientific/Engineering :: Bio-Informatics",
 	"Topic :: Utilities"
 ]
+
 [project.urls]
 Repository = "https://github.com/pachterlab/concordex"
 
