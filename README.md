@@ -5,6 +5,10 @@ The goal of `concordex` is to identify spatial homogeneous regions (SHRs) as def
 ## Installation
 
 `concordex` can be installed via pip
+```bash 
+pip install concordex
+```
+.... and from Github 
 ```bash
 pip install git+https://github.com/pachterlab/concordex.git
 ```
