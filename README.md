@@ -35,7 +35,7 @@ ad.uns['nbc_params']['nbc_colnames']
 ## Citation
 
 If you’d like to use the `concordex` package in your research, please
-cite our recent bioRxiv preprint
+cite our recent bioRxiv preprint:
 
 > Jackson, K.; Booeshaghi, A. S.; Gálvez-Merchán, Á.; Moses, L.; Chari,
 > T.; Kim, A.; Pachter, L. Identification of spatial homogeneous regions in tissues 
