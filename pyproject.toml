@@ -48,6 +48,8 @@ current_version = "1.0.2"
 commit = true
 tag = false
 files = [
+	setup.cfg,
+	pyproject.toml,
     "concordex/__init__.py",
     "README.md"
 ]
