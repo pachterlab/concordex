@@ -16,8 +16,9 @@ def calculate_concordex(
     metric: str = "euclidean", 
     metric_params: dict | None = None,
     n_jobs: int | None = None,
-    index_key: str = "index",
-    compute_similarity: bool = False
+    key_added: str | None = None,
+    compute_similarity: bool = False, 
+    recompute_index: bool = False
 ):
     """
     adata   
@@ -29,35 +30,32 @@ def calculate_concordex(
     n_neighbors 
         Number of neighbors used to compute the kNN graph. Defaults to 30.
     metric  
+        Metric used to compute distance
     metric_params 
         Additional parameters passed to metric function
     n_jobs
         Used to control parallel evaluation
-    index_key
-        The key in `adata.obsm` storing the neighborhood information. 
-        Usually from running concordex.neighbors.compute_neighbors(), otherwise, 
-        this should point to an nxk matrix, where the entries in each column are the
-        indices of the k nearest-neighbors of the given observation. 
+    key_added
+        If not specified, the relevant results are stored as
+        :attr:`~anndata.AnnData.obsm`\\ `['index']`, the neighborhood consolidation matrix as 
+        :attr:`~anndata.AnnData.obsm`\\ `['nbc']`, and the parameters as 
+        :attr:`~anndata.AnnData.uns`\\ `['index_params']` and 
+        :attr:`~anndata.AnnData.uns`\\ `['nbc_params']`.
+        If specified, ``[key_added]`` is prepended to the default keys.
     compute_similarity
         Whether to return the label similarity matrix and stores this information in 
-        adata.uns['nbc_params']['similarity']. Only useful if discrete labels are 
-        provided. 
-
+        adata.uns['nbc_params']['similarity']. Only implemented for discrete labels. 
+    recompute_index
+        If a neighborhood graph exists at the specified key, should the 
+        data be overwritten? 
     """
+    
+    # 1. Compute neighborhood graph
+    compute_neighbors(adata, 
+        use_rep=use_rep, n_neighbors=n_neighbors, metric=metric, 
+        metric_params=metric_params, n_jobs=n_jobs, key_added=key_added, recompute_index=recompute_index)
 
-    if index_key and index_key in adata.obsm.keys():
-        consolidate(adata, labels, 
-            index_key=index_key, compute_similarity=compute_similarity)
-        
-    else: 
-        if index_key is None:
-            index_key = "index"
-
-        compute_neighbors(adata, 
-            use_rep=use_rep, n_neighbors=n_neighbors, metric=metric, 
-            metric_params=metric_params, n_jobs=n_jobs)
-
-        consolidate(adata, labels, 
-            index_key=index_key, compute_similarity=compute_similarity)
+    # 2. Then consolidate
+    consolidate(adata, labels, key_added=key_added, compute_similarity=compute_similarity)
 
 
