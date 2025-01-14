@@ -1,4 +1,5 @@
 import numpy as np
+import warnings 
 
 from anndata import AnnData
 from sklearn.neighbors import NearestNeighbors
@@ -9,7 +10,6 @@ def consolidate(
     adata: AnnData, 
     labels, 
     *, 
-    index_key: str = "index",
     compute_similarity: bool = False,
     key_added: str | None = None, 
     copy: bool = False
@@ -23,52 +23,57 @@ def consolidate(
         Observation labels used to compute the neighborhood
         consolidation matrix. Continuous or discrete labels are allowed, 
         and typically, integer labels are assumed to be discrete.
-    index_key
-        The key in adata.obsm storing the neighborhood index information. 
-        Usually from running concordex.neighbors.compute_neighbors()
     compute_similarity
         Whether to return the label similarity matrix. Only useful if 
         discrete labels are provided. 
     key_added
-        Control where NBC and similarity matrix are saved in adata.obsm if 
-        copy is False
+        If not specified, the neighborhood consolidation matrix is stored as
+        :attr:`~anndata.AnnData.obsm`\\ `['X_nbc']`, and the parameters as 
+        :attr:`~anndata.AnnData.uns`\\ `['nbc_params']`. 
+        The index is assumed to be stored as 
+        :attr:`~anndata.AnnData.obsm`\\`['index']`
+
+        If specified, ``[key_added]`` is prepended to the default keys.
     copy 
-        If copy is True, return the neighborhood consolidation matrix instead 
+        If ``copy=True``, return the neighborhood consolidation matrix instead 
         of updating adata.
     """
+
+    if key_added is None:
+        nbc_uns_key = "nbc_params"
+        nbc_key = "X_nbc"
+        index_key = "index"
+    else:
+        nbc_key = key_added + "_nbc"
+        nbc_uns_key = key_added + "_nbc_params"
+        index_key = key_added + "_index"
+
     if index_key in adata.obsm.keys():
         Index = adata.obsm[index_key]
     else:
-        raise ValueError("Must run concordex.neighbors.compute_neighbors") # Need to run concordex.neighbors.compute_neighbors
-    
-    # To-do: Create Label Class
+        raise ValueError("Must run ``concordex.neighbors.compute_neighbors()``")
+
     labels = Labels(labels)
     labels.extract(adata)
 
     if labels.labeltype != "discrete" and compute_similarity:
         compute_similarity = False
-        raise Warning("Expected discrete labels to compute similarity matrix")
+        warnings.warn("Expected discrete labels to compute similarity matrix")
     
+
     if compute_similarity:
+        print("Computing neighborhood consolidation and similarity matrices...\n")
         nbc, sim = _consolidate(Index, labels, compute_similarity)
     else:
+        print("Computing neighborhood consolidation matrix...\n")
         nbc = _consolidate(Index, labels, compute_similarity)
 
-    # Add results to adata
-    if copy:
-        return nbc
-    
-    if key_added is None:
-        key_added = "nbc_params"
-        nbc_key = "nbc"
-    else:
-        nbc_key = key_added + "_nbc"
-
-    adata.uns[key_added] = {}
-    nbc_index_dict = adata.uns[key_added]
+    adata.uns[nbc_uns_key] = {}
+    nbc_index_dict = adata.uns[nbc_uns_key]
     
     nbc_index_dict = {
         "nbc_key": nbc_key,
+        "labels": labels,
         "labels_found" : labels.labelnames,
         "nbc_colnames" : labels.nbccolumns,
         "params": {
@@ -80,8 +85,11 @@ def consolidate(
         nbc_index_dict['similarity'] = sim
         nbc_index_dict['labelorder'] = labels.discretelabelsunique
 
+    if copy:
+        return nbc, nbc_index_dict
+    
     # Update adata
-    adata.uns[key_added] = nbc_index_dict
+    adata.uns[nbc_uns_key] = nbc_index_dict
     adata.obsm[nbc_key] = nbc 
    
 
@@ -126,6 +134,7 @@ def compute_neighbors(
     metric_params: dict | None = None,
     n_jobs: int | None = None,
     key_added: str | None = None,
+    recompute_index: bool = False, 
     copy: bool = False,
     **kwargs
 ):
@@ -146,8 +155,12 @@ def compute_neighbors(
         Used to control parallel evaluation
     key_added 
         Key which controls where the results are saved if ``copy = False``.
+    recompute_index
+        If a neighborhood graph exists at the specified key, should the 
+        data be overwritten? 
     copy : bool
-        Return the neighborhood Index, or add to adata?
+        If ``copy = True``, return the nearest neighbor graph instead of 
+        updating adata.
     **kwargs 
         Additional keyword arguments passed to sklearn.neighbors.NearestNeighbors
     """
@@ -158,7 +171,7 @@ def compute_neighbors(
             X = adata.obsm[use_rep]
         else:
             raise ValueError(
-                f"Did not find {use_rep} in `.obsm.keys()`. "
+                f"Did not find {use_rep} in ``.obsm.keys()``. "
             )
 
     nn_kwargs = {}
@@ -171,40 +184,51 @@ def compute_neighbors(
 
         nn_kwargs['metric_params'] = metric_params
     
-    # To-do: If `connectivities` exists in .obsp, find Index by locating 
-    # non-zero entries
-    Index = _compute_neighbors(
-        X, n_neighbors=n_neighbors, metric=metric, n_jobs=n_jobs, **nn_kwargs
-    )
-
-    if copy:
-        return Index 
-    
     if key_added is None:
-        key_added = "index_neighbors"
+        index_uns_key = "index_params"
         index_key = "index"
     else:
+        index_uns_key = key_added + "_index_params"
         index_key = key_added + "_index"
-    
-    adata.uns[key_added] = {}
-    neighbors_index_dict = adata.uns[key_added]
-    
-    neighbors_index_dict = {
-        "index_key": index_key,
-        "params": {
-            "n_neighbors": n_neighbors,
-            "metric": metric,
-        },
-    }
 
-    if nn_kwargs:
-        neighbors_index_dict['params']['nn_kwargs'] = nn_kwargs
+    index_exists = index_key in adata.obsm.keys() 
 
-    if use_rep is not None:
-        neighbors_index_dict["params"]["use_rep"] = use_rep  
+    print("Computing nearest neighbors...\n")
+    if index_exists and not recompute_index:
+        warnings.warn(f""" A neighborhood graph already exists at ``adata.obsm[{index_key}]``. 
+            Set ``recompute_index = TRUE`` to overwrite the existing graph.""")
+            
+        Index = adata.obsm[index_key]
+        neighbors_index_dict = adata.uns[index_uns_key]
+    
+    if recompute_index or not index_exists: 
+       
+        Index = _compute_neighbors(
+            X, n_neighbors=n_neighbors, metric=metric, n_jobs=n_jobs, **nn_kwargs
+        )
+
+        adata.uns[index_uns_key] = {}
+        neighbors_index_dict = adata.uns[index_uns_key]
+
+        neighbors_index_dict = {
+            "index_key": index_key,
+            "params": {
+                "n_neighbors": n_neighbors,
+                "metric": metric,
+            }
+        }
+
+        if nn_kwargs:
+            neighbors_index_dict['params']['nn_kwargs'] = nn_kwargs
+
+        if use_rep is not None:
+            neighbors_index_dict["params"]["use_rep"] = use_rep
+
+    if copy:
+        return Index  
 
     # Update adata
-    adata.uns[key_added] = neighbors_index_dict
+    adata.uns[index_uns_key] = neighbors_index_dict
     adata.obsm[index_key] = Index 
     
 def _compute_neighbors(
