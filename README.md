@@ -1,4 +1,4 @@
-# concordex 1.0.2
+# concordex 1.1.0
 
 The goal of `concordex` is to identify spatial homogeneous regions (SHRs) as defined in the recent manuscript, [“Identification of spatial homogenous regions in tissues with concordex”](https://doi.org/10.1101/2023.06.28.546949). Briefly, SHRs are are domains that are homogeneous with respect to cell type composition. `concordex` relies on the the k-nearest-neighbor (kNN) graph to representing similarities between cells and uses common clustering algorithms to identify SHRs.
 
