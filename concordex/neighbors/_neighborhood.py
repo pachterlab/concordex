@@ -195,8 +195,9 @@ def compute_neighbors(
 
     print("Computing nearest neighbors...\n")
     if index_exists and not recompute_index:
-        warnings.warn(f""" A neighborhood graph already exists at ``adata.obsm[{index_key}]``. 
-            Set ``recompute_index = TRUE`` to overwrite the existing graph.""")
+        warnings.warn(
+            f"A neighborhood graph already exists at ``adata.obsm[{index_key}]``. \
+              Set ``recompute_index = TRUE`` to overwrite the existing graph.")
             
         Index = adata.obsm[index_key]
         neighbors_index_dict = adata.uns[index_uns_key]
