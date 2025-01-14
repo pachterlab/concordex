@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "concordex"
-version = "1.0.2"
+version = "1.1.1"
 description = "Identification of spatial homogeneous regions with concordex"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -44,7 +44,7 @@ Repository = "https://github.com/pachterlab/concordex"
 packages = { find = {} }
 
 [tool.bumpversion]
-current_version = "1.0.2"
+current_version = "1.1.1"
 commit = true
 tag = false
 files = [
