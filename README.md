@@ -26,7 +26,7 @@ ad = sc.datasets.pbmc68k_reduced()
 calculate_concordex(ad, 'louvain', n_neighbors=10)
 
 # Neighborhood consolidation information is stored in `adata.obsm`
-ad.obsm['nbc'][:3]
+ad.obsm['X_nbc'][:3]
 
 # The column names are stored in `adata.uns`
 ad.uns['nbc_params']['nbc_colnames']
