@@ -5,6 +5,7 @@ __pycache__/
 *.egg-info/
 
 data/
+examples/
 /dist/
 /build/
 /*-env/
