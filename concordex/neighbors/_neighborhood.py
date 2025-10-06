@@ -2,7 +2,7 @@ import numpy as np
 import warnings 
 
 from anndata import AnnData
-from sklearn.neighbors import NearestNeighbors
+from sklearn.neighbors import kneighbors_graph
 
 from ..utils._labels import Labels
 
@@ -30,8 +30,8 @@ def consolidate(
         If not specified, the neighborhood consolidation matrix is stored as
         :attr:`~anndata.AnnData.obsm`\\ `['X_nbc']`, and the parameters as 
         :attr:`~anndata.AnnData.uns`\\ `['nbc_params']`. 
-        The index is assumed to be stored as 
-        :attr:`~anndata.AnnData.obsm`\\`['index']`
+        The neighbor information is assumed to be stored as 
+        :attr:`~anndata.AnnData.obsm`\\`['adjacency']`
 
         If specified, ``[key_added]`` is prepended to the default keys.
     copy 
@@ -42,14 +42,14 @@ def consolidate(
     if key_added is None:
         nbc_uns_key = "nbc_params"
         nbc_key = "X_nbc"
-        index_key = "index"
+        adj_key = "adjacency"
     else:
         nbc_key = key_added + "_nbc"
         nbc_uns_key = key_added + "_nbc_params"
-        index_key = key_added + "_index"
+        adj_key = key_added + "_adjacency"
 
-    if index_key in adata.obsm.keys():
-        Index = adata.obsm[index_key]
+    if adj_key in adata.obsm.keys():
+        Adj = adata.obsm[adj_key]
     else:
         raise ValueError("Must run ``concordex.neighbors.compute_neighbors()``")
 
@@ -63,10 +63,10 @@ def consolidate(
 
     if compute_similarity:
         print("Computing neighborhood consolidation and similarity matrices...\n")
-        nbc, sim = _consolidate(Index, labels, compute_similarity)
+        nbc, sim = _consolidate(Adj, labels, compute_similarity)
     else:
         print("Computing neighborhood consolidation matrix...\n")
-        nbc = _consolidate(Index, labels, compute_similarity)
+        nbc = _consolidate(Adj, labels, compute_similarity)
 
     adata.uns[nbc_uns_key] = {}
     nbc_index_dict = adata.uns[nbc_uns_key]
@@ -95,18 +95,13 @@ def consolidate(
 
 def _consolidate(X, labels, compute_similarity):
 
-    def take_col_means(indices, take_from, take_by='row'):
-        if take_by == 'row':
-            axis=0
-        else:
-            axis=1
-        sub = np.take(take_from, indices, axis=axis)
-
-        return sub.mean(axis=0)
-
     labels_values = labels.values
 
-    Nbc = np.apply_along_axis(take_col_means, 1, X, take_from=labels_values)
+    scale_factor = X.sum(axis=1)
+
+    # Check to make sure dimensions are compatible?
+    Nbc = X @ labels_values
+    Nbc = Nbc / scale_factor
 
     if compute_similarity:
         nlab = labels.n_unique_labels
@@ -134,12 +129,12 @@ def compute_neighbors(
     metric_params: dict | None = None,
     n_jobs: int | None = None,
     key_added: str | None = None,
-    recompute_index: bool = False, 
+    recompute_neighbors: bool = False, 
     copy: bool = False,
     **kwargs
 ):
     """
-    A very thin wrapper around `sklearn.neighbors.NearestNeighbors`
+    A very thin wrapper around `sklearn.neighbors.kneighbors_graph`
 
     adata 
         The adata object
@@ -155,7 +150,7 @@ def compute_neighbors(
         Used to control parallel evaluation
     key_added 
         Key which controls where the results are saved if ``copy = False``.
-    recompute_index
+    recompute_neighbors
         If a neighborhood graph exists at the specified key, should the 
         data be overwritten? 
     copy : bool
@@ -185,34 +180,34 @@ def compute_neighbors(
         nn_kwargs['metric_params'] = metric_params
     
     if key_added is None:
-        index_uns_key = "index_params"
-        index_key = "index"
+        adj_uns_key = "adj_params"
+        adj_key = "adjacency"
     else:
-        index_uns_key = key_added + "_index_params"
-        index_key = key_added + "_index"
+        adj_uns_key = key_added + "_adj_params"
+        adj_key = key_added + "_adjacency"
 
-    index_exists = index_key in adata.obsm.keys() 
+    neighbors_exists = adj_key in adata.obsm.keys() 
 
     print("Computing nearest neighbors...\n")
-    if index_exists and not recompute_index:
+    if neighbors_exists and not recompute_neighbors:
         warnings.warn(
-            f"A neighborhood graph already exists at ``adata.obsm[{index_key}]``. \
-              Set ``recompute_index = TRUE`` to overwrite the existing graph.")
+            f"A neighborhood graph already exists at ``adata.obsm[{adj_key}]``. \
+              Set ``recompute_neighbors = TRUE`` to overwrite the existing graph.")
             
-        Index = adata.obsm[index_key]
-        neighbors_index_dict = adata.uns[index_uns_key]
+        Adj = adata.obsm[adj_key]
+        adjacency_index_dict = adata.uns[adj_uns_key]
     
-    if recompute_index or not index_exists: 
+    if recompute_neighbors or not neighbors_exists: 
        
         Index = _compute_neighbors(
             X, n_neighbors=n_neighbors, metric=metric, n_jobs=n_jobs, **nn_kwargs
         )
 
-        adata.uns[index_uns_key] = {}
-        neighbors_index_dict = adata.uns[index_uns_key]
+        adata.uns[adj_uns_key] = {}
+        adjacency_index_dict = adata.uns[adj_uns_key]
 
-        neighbors_index_dict = {
-            "index_key": index_key,
+        adjacency_index_dict = {
+            "adj_key": adj_key,
             "params": {
                 "n_neighbors": n_neighbors,
                 "metric": metric,
@@ -220,17 +215,17 @@ def compute_neighbors(
         }
 
         if nn_kwargs:
-            neighbors_index_dict['params']['nn_kwargs'] = nn_kwargs
+            adjacency_index_dict['params']['nn_kwargs'] = nn_kwargs
 
         if use_rep is not None:
-            neighbors_index_dict["params"]["use_rep"] = use_rep
+            adjacency_index_dict["params"]["use_rep"] = use_rep
 
     if copy:
-        return Index  
+        return Adj  
 
     # Update adata
-    adata.uns[index_uns_key] = neighbors_index_dict
-    adata.obsm[index_key] = Index 
+    adata.uns[adj_uns_key] = adjacency_index_dict
+    adata.obsm[adj_key] = Index 
     
 def _compute_neighbors(
     X, 
@@ -242,16 +237,8 @@ def _compute_neighbors(
 
     N = X.shape[0]
     
-    if include_self:
-        index = 0
-    else: 
-        index = 1
-        n_neighbors = n_neighbors+1 
-    
-    nbrs = NearestNeighbors(n_neighbors=n_neighbors, **kwargs)
-    nbrs.fit(X)
+    nbrs = kneighbors_graph(X, n_neighbors=n_neighbors, include_self=include_self, **kwargs)
 
-    g = nbrs.kneighbors(X, return_distance=False)
 
-    return g[:, index:]
+    return nbrs
 
