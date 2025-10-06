@@ -1,7 +1,7 @@
 import numpy as np
 from anndata import AnnData
 
-from ..neighbors._neighborhood import (
+from neighbors import (
     compute_neighbors, 
     consolidate
     )
@@ -56,7 +56,7 @@ def calculate_concordex(
         use_rep=use_rep, n_neighbors=n_neighbors, metric=metric, 
         metric_params=metric_params, n_jobs=n_jobs, key_added=key_added, recompute_neighbors=recompute_neighbors)
 
-    # 2. Then consolidate
+    # 2. Then consolidatescm-history-item:/Users/kaylajackson/Library/CloudStorage/OneDrive-CaliforniaInstituteofTechnology/Projects/concordex?%7B%22repositoryId%22%3A%22scm0%22%2C%22historyItemId%22%3A%2275c203ffcfea81cbeb3d4e7a74927c49d90ee3c7%22%2C%22historyItemParentId%22%3A%2224721cfd2af304a651af28d6d6c140e74e1c14d4%22%2C%22historyItemDisplayId%22%3A%2275c203f%22%7D
     consolidate(adata, labels, key_added=key_added, compute_similarity=compute_similarity)
 
 
