@@ -37,9 +37,9 @@ def calculate_concordex(
         Used to control parallel evaluation
     key_added
         If not specified, the relevant results are stored as
-        :attr:`~anndata.AnnData.obsm`\\ `['index']`, the neighborhood consolidation matrix as 
+        :attr:`~anndata.AnnData.obsm`\\ `['adjacency']`, the neighborhood consolidation matrix as 
         :attr:`~anndata.AnnData.obsm`\\ `['nbc']`, and the parameters as 
-        :attr:`~anndata.AnnData.uns`\\ `['index_params']` and 
+        :attr:`~anndata.AnnData.uns`\\ `['adj_params']` and 
         :attr:`~anndata.AnnData.uns`\\ `['nbc_params']`.
         If specified, ``[key_added]`` is prepended to the default keys.
     compute_similarity
