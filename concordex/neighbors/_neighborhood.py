@@ -199,7 +199,7 @@ def compute_neighbors(
     
     if recompute_neighbors or not neighbors_exists: 
        
-        Index = _compute_neighbors(
+        Adj = _compute_neighbors(
             X, n_neighbors=n_neighbors, metric=metric, n_jobs=n_jobs, **nn_kwargs
         )
 
@@ -225,7 +225,7 @@ def compute_neighbors(
 
     # Update adata
     adata.uns[adj_uns_key] = adjacency_index_dict
-    adata.obsm[adj_key] = Index 
+    adata.obsm[adj_key] = Adj 
     
 def _compute_neighbors(
     X, 
