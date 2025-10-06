@@ -44,7 +44,7 @@ Repository = "https://github.com/pachterlab/concordex"
 packages = { find = {} }
 
 [tool.bumpversion]
-current_version = "1.1.1"
+version = "1.1.1"
 commit = true
 tag = false
 files = [
